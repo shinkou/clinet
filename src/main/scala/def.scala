@@ -42,6 +42,7 @@ class MainWindow extends Frame {
 				if (running.get && !sock.isClosed && sock.isConnected) {
 					istream = sock.getInputStream
 					ostream = sock.getOutputStream
+					idx.set(txta.text.length)
 				}
 			}
 		}
