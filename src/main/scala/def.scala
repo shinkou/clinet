@@ -26,23 +26,28 @@ class MainWindow extends Frame {
 	var idx = new AtomicInteger(0)
 	def comm = {
 		while(running.get) {
-			while(!sock.isClosed && sock.isConnected && 0 < istream.available) {
-				val arr: Array[Byte] = new Array[Byte](istream.available)
-				istream.read(arr)
-				val msg = new String(arr)
-				txta.append(msg)
-				idx.set(txta.text.length)
-				txta.caret.position = idx.get
-			}
-			if (running.get && sock.isClosed) {
+			if (sock.isClosed) {
 				sock = new Socket
 			}
-			if (running.get && !sock.isClosed && !sock.isConnected) {
+			if (!sock.isClosed && !sock.isConnected) {
 				val cnxDlg = new ConnectDialog(this, sock, running, host, port)
-				if (running.get && !sock.isClosed && sock.isConnected) {
+				if (sock.isConnected) {
 					istream = sock.getInputStream
 					ostream = sock.getOutputStream
 					idx.set(txta.text.length)
+				}
+			}
+			if (null != istream) {
+				val i = istream.read
+				if (0 <= i && i < 256) {
+					val arr: Array[Byte] = new Array[Byte](istream.available)
+					istream.read(arr)
+					val msg = new String(Array(i.toByte) ++ arr)
+					txta.append(msg)
+					idx.set(txta.text.length)
+					txta.caret.position = idx.get
+				} else {
+					sock.close
 				}
 			}
 		}
