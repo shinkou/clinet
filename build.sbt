@@ -3,6 +3,7 @@ name := "clinet"
 organization := "com.github.shinkou"
 scalaVersion := "2.13.12"
 version := "0.1.0"
+mainClass := Some("Main")
 
 libraryDependencies ++= Seq(
     "org.scala-lang.modules" %% "scala-parser-combinators" % "2.3.0",
